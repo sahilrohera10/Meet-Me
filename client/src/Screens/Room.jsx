@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState , useRef } from "react";
 import { useSocket } from "../context/SocketProvider";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
+import '../Screens/Room.css';
 
 export default function Room() {
   const socket = useSocket();
@@ -106,26 +107,35 @@ export default function Room() {
     handleNegoNeedIncomming,
     handleNegoFinal,
   ]);
+  const videoRef = useRef();
+  const videoStyles = {
+    width: '100%', // Set the width as you like
+    height: 'auto', // Set the height as you like
+    borderRadius: '100px', // Add a border radius or any other styling you need
+  };
 
   return (
-    <div>
+    <div style={{backgroundColor:'rgb(32,33,36)' , width:"100vw" , height:"100vh"}}>
       <h1>Room</h1>
       <h3> {remoteSocketId ? "Connected" : "No one is in the Room"} </h3>
       {myStream && <button onClick={sendStreams}>Send Stream</button>}
       {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>}
+      <div style={{display:'flex' , flexDirection:"row" ,justifyContent:"space-evenly"}}>
+
       {myStream && (
         <div style={{ margin: "auto" }}>
-          <ReactPlayer playing muted url={myStream} />
-          <p> My Stream </p>
+          <ReactPlayer className="player" width="500px" height="500px"  playing muted url={myStream} />
+          <p style={{}}> My Stream </p>
         </div>
       )}
 
       {remoteStream && (
         <div style={{ margin: "auto" }}>
-          <ReactPlayer playing muted url={remoteStream} />
+          <ReactPlayer className="player" width="500px" height="500px" playing muted url={remoteStream} />
           <p> Remote Stream </p>
         </div>
       )}
+      </div>
     </div>
   );
 }
