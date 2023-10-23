@@ -6,10 +6,9 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import SocketProvider from "./context/SocketProvider";
 import { GoogleOAuthProvider } from '@react-oauth/google'
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <GoogleOAuthProvider clientId="167876669841-u1rg1h3dmnuca2kimg1q940m4ngoe8rb.apps.googleusercontent.com" >
+  <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE} >
   <React.StrictMode>
     <BrowserRouter>
       <SocketProvider>
