@@ -5,9 +5,11 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import SocketProvider from "./context/SocketProvider";
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
+  <GoogleOAuthProvider clientId="167876669841-u1rg1h3dmnuca2kimg1q940m4ngoe8rb.apps.googleusercontent.com" >
   <React.StrictMode>
     <BrowserRouter>
       <SocketProvider>
@@ -15,6 +17,7 @@ root.render(
       </SocketProvider>
     </BrowserRouter>
   </React.StrictMode>
+  </GoogleOAuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

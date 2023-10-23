@@ -1,13 +1,24 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { useNavigate } from "react-router-dom";
+import { GoogleLogin } from "@react-oauth/google";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import {  useSelector, useDispatch } from "react-redux";
+import { addprofile } from '../utils/slices/userSlice'
 
 export default function Lobby() {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
+  const dispatch = useDispatch();
+  const d = useSelector((store)=>store.user.profile);
+  d.length &&  console.log(d[0].email);
 
+  //for user details we will store in redux store
+  const [user, setUser] = useState([]);
+  const [profile, setProfile] = useState([]);
+  
   const navigate = useNavigate();
-
+  
   const socket = useSocket();
   console.log(socket);
 
@@ -34,6 +45,42 @@ export default function Lobby() {
       socket.off("room:join", handleJoinRoom);
     };
   }, [socket, handleJoinRoom]);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  useEffect(() => {
+    if (user) {
+      fetch(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${user.access_token}`,
+          'Accept': 'application/json',
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          dispatch(addprofile(data));
+          
+
+          setProfile(data);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [user]);
+
+  
+  const logOut = () => {
+    googleLogout();
+    setProfile(null);
+};
 
   return (
     <div>
@@ -65,6 +112,7 @@ export default function Lobby() {
           Join Now
         </button>
       </form>
+      <button onClick={() => login()}>Sign in with Google 🚀 </button>
     </div>
   );
 }
