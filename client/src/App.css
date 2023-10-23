@@ -6,6 +6,11 @@
   justify-content: center;
 }
 
+body{
+  background-color: #282c34;
+  overflow-y: hidden;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
