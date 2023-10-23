@@ -5,6 +5,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import {  useSelector, useDispatch } from "react-redux";
 import { addprofile } from '../utils/slices/userSlice'
+import configData from "../config";
+
 
 export default function Lobby() {
   const [email, setEmail] = useState("");
@@ -17,6 +19,16 @@ export default function Lobby() {
   const [user, setUser] = useState([]);
   const [profile, setProfile] = useState([]);
   
+  const createLink = (e, email) => {
+    e.preventDefault();
+    const arr = email.split("@");
+    const id = arr[0];
+    const token = Math.floor(Math.random() * 10000);
+    const link = `${id}-${token}`;
+    console.log("meet-link", { link });
+    return link;
+  };
+
   const navigate = useNavigate();
   
   const socket = useSocket();
@@ -25,15 +37,22 @@ export default function Lobby() {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      socket.emit("room:join", { email, room });
+      let link;
+      if (room.length > 0) {
+        link = room;
+      } else {
+        link = createLink(e, email);
+      }
+      console.log(link);
+      socket.emit("room:join", { email, link });
     },
     [email, room, socket]
   );
 
   const handleJoinRoom = useCallback(
     (data) => {
-      const { email, room } = data;
-      navigate(`/room/${room}`);
+      const { email, link } = data;
+      navigate(`/${link}`);
     },
     [navigate]
   );
@@ -108,6 +127,9 @@ export default function Lobby() {
           onChange={(e) => setRoom(e.target.value)}
         />
         <br />
+        <button style={{ marginTop: "20px" }} onClick={(e) => handleSubmit(e)}>
+          Create an Instant Link
+        </button>
         <button style={{ marginTop: "20px" }} onClick={(e) => handleSubmit(e)}>
           Join Now
         </button>
