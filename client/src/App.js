@@ -10,6 +10,7 @@ function App() {
     <Provider store={appStore}>
     <div className="App">
       <Routes>
+        
         <Route path="/" element={<Lobby />} />
         <Route path="/:roomId" element={<Room />} />
       </Routes>
