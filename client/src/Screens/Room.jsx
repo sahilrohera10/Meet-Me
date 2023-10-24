@@ -1,14 +1,29 @@
-import React, { useCallback, useEffect, useState , useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useSocket } from "../context/SocketProvider";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
-import '../Screens/Room.css';
+import "../Screens/Room.css";
+import { BsFillCameraVideoFill ,BsFillCameraVideoOffFill } from 'react-icons/bs'
+import { AiOutlineAudio , AiOutlineAudioMuted } from 'react-icons/ai'
 
 export default function Room() {
   const socket = useSocket();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+
+  const [videoEnabled, setVideoEnabled] = useState(true); // To track video status
+const [audioEnabled, setAudioEnabled] = useState(true); // To track audio status
+
+const toggleVideo = () => {
+  myStream.getVideoTracks()[0].enabled = !videoEnabled;
+  setVideoEnabled(!videoEnabled);
+};
+
+const toggleAudio = () => {
+  myStream.getAudioTracks()[0].enabled = !audioEnabled;
+  setAudioEnabled(!audioEnabled);
+};
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} has joined the room`);
@@ -109,32 +124,69 @@ export default function Room() {
   ]);
   const videoRef = useRef();
   const videoStyles = {
-    width: '100%', // Set the width as you like
-    height: 'auto', // Set the height as you like
-    borderRadius: '100px', // Add a border radius or any other styling you need
+    width: "100%", // Set the width as you like
+    height: "auto", // Set the height as you like
+    borderRadius: "100px", // Add a border radius or any other styling you need
   };
 
   return (
-    <div style={{backgroundColor:'rgb(32,33,36)' , width:"100vw" , height:"100vh"}}>
+    <div
+      style={{
+        backgroundColor: "rgb(32,33,36)",
+        width: "100vw",
+        height: "100vh",
+        position:'relative'
+      }}
+    >
       <h1>Room</h1>
       <h3> {remoteSocketId ? "Connected" : "No one is in the Room"} </h3>
       {myStream && <button onClick={sendStreams}>Send Stream</button>}
       {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>}
-      <div style={{display:'flex' , flexDirection:"row" ,justifyContent:"space-evenly"}}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {myStream && (
+          <div style={{ margin: "auto" }}>
+            <ReactPlayer
+              className="player"
+              width="400px"
+              height="400px"
+              playing
+              muted = {!audioEnabled}
+              url={myStream}
+            />
+            <p style={{}}> My Stream </p>
+          </div>
+        )}
 
-      {myStream && (
-        <div style={{ margin: "auto" }}>
-          <ReactPlayer className="player" width="500px" height="500px"  playing muted url={myStream} />
-          <p style={{}}> My Stream </p>
-        </div>
-      )}
+        {remoteStream && (
+          <div style={{ margin: "auto" }}>
+            <ReactPlayer
+              className="player"
+              width="400px"
+              height="400px"
+              playing
+              muted = {!audioEnabled}
+              url={remoteStream}
+            />
+            <p> Remote Stream </p>
+          </div>
+        )}
+      </div>
+      <div className="control-panel-container" style={{display:"flex" , flexDirection:"row" , justifyContent:"space-evenly" ,alignItems:'center' }}>
+        <div className="control-panel" style={{backgroundColor:'aliceblue'}}>
 
-      {remoteStream && (
-        <div style={{ margin: "auto" }}>
-          <ReactPlayer className="player" width="500px" height="500px" playing muted url={remoteStream} />
-          <p> Remote Stream </p>
+    {!videoEnabled &&  <BsFillCameraVideoOffFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} />}    
+      {videoEnabled && <BsFillCameraVideoFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} /> }  
+
+   
+      {!audioEnabled && <AiOutlineAudioMuted style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
+      {audioEnabled && <AiOutlineAudio style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
         </div>
-      )}
       </div>
     </div>
   );
