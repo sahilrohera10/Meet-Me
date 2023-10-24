@@ -15,19 +15,17 @@ export default function Lobby() {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
   const [img, setImg] = useState("");
-  const [name , setName] = useState("");
+  const [name, setName] = useState("");
 
   useEffect(() => {
     const id = localStorage.getItem("email");
     if (id) setEmail(id);
-    const pic = localStorage.getItem("image");
-    setImg(pic);
+
     const firstName = localStorage.getItem("userName");
     const lastName = localStorage.getItem("lastName");
 
-    const full_name = firstName+' '+lastName;
+    const full_name = firstName + " " + lastName;
     setName(full_name);
-
   }, []);
 
   const [user, setUser] = useState([]);
@@ -50,6 +48,12 @@ export default function Lobby() {
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
+
+      if (!email) {
+        alert("Please Login First");
+        return;
+      }
+
       let link;
       if (room.length > 0) {
         link = room;
@@ -58,7 +62,7 @@ export default function Lobby() {
         link = createLink(e, email);
       }
       console.log(link);
-      socket.emit("room:join", { email, link ,name  });
+      socket.emit("room:join", { email, link, name });
     },
     [email, room, socket]
   );
@@ -107,9 +111,10 @@ export default function Lobby() {
           // dispatch(addprofile(data));
           setEmail(data.email);
           localStorage.setItem("email", data.email);
-          localStorage.setItem("image", data.picture);
-          localStorage.setItem("userName",data.given_name);
-          localStorage.setItem("lastName",data.family_name);
+          // localStorage.setItem("image", data.picture);
+          setImg(data.picture);
+          localStorage.setItem("userName", data.given_name);
+          localStorage.setItem("lastName", data.family_name);
           console.log(data);
         })
         .catch((err) => console.log(err));
