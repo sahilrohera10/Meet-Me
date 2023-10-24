@@ -17,12 +17,19 @@ export default function Lobby() {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
   const [img, setImg] = useState("");
+  const [name , setName] = useState("");
 
   useEffect(() => {
     const id = localStorage.getItem("email");
     if (id) setEmail(id);
     const pic = localStorage.getItem("image");
     setImg(pic);
+    const firstName = localStorage.getItem("userName");
+    const lastName = localStorage.getItem("lastName");
+
+    const full_name = firstName+' '+lastName;
+    setName(full_name);
+
   }, []);
 
   const [user, setUser] = useState([]);
@@ -53,7 +60,7 @@ export default function Lobby() {
         link = createLink(e, email);
       }
       console.log(link);
-      socket.emit("room:join", { email, link });
+      socket.emit("room:join", { email, link ,name  });
     },
     [email, room, socket]
   );
@@ -103,6 +110,8 @@ export default function Lobby() {
           setEmail(data.email);
           localStorage.setItem("email", data.email);
           localStorage.setItem("image", data.picture);
+          localStorage.setItem("userName",data.given_name);
+          localStorage.setItem("lastName",data.family_name);
           console.log(data);
         })
         .catch((err) => console.log(err));
