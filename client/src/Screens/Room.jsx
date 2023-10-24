@@ -3,18 +3,25 @@ import { useSocket } from "../context/SocketProvider";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import "../Screens/Room.css";
+import Button from "@mui/material/Button";
 
-import { BsFillCameraVideoFill ,BsFillCameraVideoOffFill } from 'react-icons/bs'
-import { AiOutlineAudio , AiOutlineAudioMuted } from 'react-icons/ai'
+import {
+  BsFillCameraVideoFill,
+  BsFillCameraVideoOffFill,
+} from "react-icons/bs";
+import { AiOutlineAudio, AiOutlineAudioMuted } from "react-icons/ai";
 
 import { useParams } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-
 
 export default function Room() {
   let { roomId } = useParams();
 
   const [iscopy, setIscopy] = useState(false);
+  const [invite, setInvite] = useState("");
+  const [isinvite, setIsinvite] = useState(false);
+  const [incomming, setIncomming] = useState(false);
+  const [isaccept, setIsaccept] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
@@ -28,20 +35,21 @@ export default function Room() {
   const [remoteStream, setRemoteStream] = useState();
 
   const [videoEnabled, setVideoEnabled] = useState(true); // To track video status
-const [audioEnabled, setAudioEnabled] = useState(true); // To track audio status
+  const [audioEnabled, setAudioEnabled] = useState(true); // To track audio status
 
-const toggleVideo = () => {
-  myStream.getVideoTracks()[0].enabled = !videoEnabled;
-  setVideoEnabled(!videoEnabled);
-};
+  const toggleVideo = () => {
+    myStream.getVideoTracks()[0].enabled = !videoEnabled;
+    setVideoEnabled(!videoEnabled);
+  };
 
-const toggleAudio = () => {
-  myStream.getAudioTracks()[0].enabled = !audioEnabled;
-  setAudioEnabled(!audioEnabled);
-};
+  const toggleAudio = () => {
+    myStream.getAudioTracks()[0].enabled = !audioEnabled;
+    setAudioEnabled(!audioEnabled);
+  };
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} has joined the room`);
+    setInvite(email);
     setRemoteSocketId(id);
   }, []);
 
@@ -53,6 +61,7 @@ const toggleAudio = () => {
     const offer = await peer.getOffer();
     socket.emit("user:call", { to: remoteSocketId, offer });
     setMyStream(stream);
+    setIsinvite(true);
   }, [remoteSocketId, socket]);
 
   const handleIncommingCall = useCallback(
@@ -64,6 +73,7 @@ const toggleAudio = () => {
       });
       setMyStream(stream);
       console.log(`Incomming Call`, from, offer);
+      setIncomming(true);
       const ans = await peer.getAnswer(offer);
       socket.emit("call:accepted", { to: from, ans });
     },
@@ -73,6 +83,7 @@ const toggleAudio = () => {
   const sendStreams = useCallback(() => {
     for (const track of myStream.getTracks()) {
       peer.peer.addTrack(track, myStream);
+      setIsaccept(true);
     }
   }, [myStream]);
 
@@ -150,19 +161,17 @@ const toggleAudio = () => {
         backgroundColor: "rgb(32,33,36)",
         width: "100vw",
         height: "100vh",
-
-        position:'relative'
       }}
     >
-
       <h1 style={{ color: "white" }}>Meet-Me's Room</h1>
       <h3 style={{ color: "white" }}>
         {" "}
-        {remoteSocketId ? "Connected" : "No one is in the here !"}{" "}
+        {remoteSocketId ? "" : "No one is here !"}{" "}
       </h3>
+      {/* {myStream && <button onClick={sendStreams}>Send Stream</button>} */}
+      {/* {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>} */}
 
-      {myStream && <button onClick={sendStreams}>Send Stream</button>}
-      {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>}
+      {/* ......................video player.............. */}
       <div
         style={{
           display: "flex",
@@ -170,42 +179,36 @@ const toggleAudio = () => {
           justifyContent: "space-evenly",
         }}
       >
+        {/* ............................my stream......................  */}
         {myStream && (
           <div style={{ margin: "auto" }}>
             <ReactPlayer
               className="player"
-
               width="400px"
               height="400px"
               playing
-              muted = {!audioEnabled}
-
-              width="500px"
-              height="500px"
-              playing
-              muted
-
+              muted={!audioEnabled}
+              // width="500px"
+              // height="500px"
+              // playing
               url={myStream}
             />
             <p style={{}}> My Stream </p>
           </div>
         )}
 
+        {/* ............................remote stream............................ */}
         {remoteStream && (
           <div style={{ margin: "auto" }}>
             <ReactPlayer
               className="player"
-
               width="400px"
               height="400px"
               playing
-              muted = {!audioEnabled}
-
-              width="500px"
-              height="500px"
-              playing
-              muted
-
+              muted={!audioEnabled}
+              // width="500px"
+              // height="500px"
+              // playing
               url={remoteStream}
             />
             <p> Remote Stream </p>
@@ -213,22 +216,56 @@ const toggleAudio = () => {
         )}
       </div>
 
-      <div className="control-panel-container" style={{display:"flex" , flexDirection:"row" , justifyContent:"space-evenly" ,alignItems:'center' }}>
-        <div className="control-panel" style={{backgroundColor:'aliceblue'}}>
+      {/* ..................controll panel.................... */}
+      {myStream && (
+        <div
+          className="control-panel-container"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+          }}
+        >
+          <div
+            className="control-panel"
+            style={{ backgroundColor: "aliceblue" }}
+          >
+            {!videoEnabled && (
+              <BsFillCameraVideoOffFill
+                style={{ height: "50px", width: "50px" }}
+                onClick={toggleVideo}
+              />
+            )}
+            {videoEnabled && (
+              <BsFillCameraVideoFill
+                style={{ height: "50px", width: "50px" }}
+                onClick={toggleVideo}
+              />
+            )}
 
-    {!videoEnabled &&  <BsFillCameraVideoOffFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} />}    
-      {videoEnabled && <BsFillCameraVideoFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} /> }  
+            {!audioEnabled && (
+              <AiOutlineAudioMuted
+                style={{ height: "50px", width: "50px" }}
+                onClick={toggleAudio}
+              />
+            )}
+            {audioEnabled && (
+              <AiOutlineAudio
+                style={{ height: "50px", width: "50px" }}
+                onClick={toggleAudio}
+              />
+            )}
+          </div>
+        </div>
+      )}
 
-   
-      {!audioEnabled && <AiOutlineAudioMuted style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
-      {audioEnabled && <AiOutlineAudio style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
-
-
+      {/* .....................share room id box ....................*/}
       <div
         style={{
           position: "absolute",
-          top: "80%",
-          left: "3%",
+          top: "83%",
+          left: "1%",
           border: "1px solid white",
           width: "20vw",
           height: "15vh",
@@ -257,7 +294,11 @@ const toggleAudio = () => {
             {iscopy ? (
               <button
                 disabled
-                style={{ background: "green", color: "white", border: "none" }}
+                style={{
+                  background: "green",
+                  color: "white",
+                  border: "none",
+                }}
               >
                 Copied
               </button>
@@ -265,9 +306,72 @@ const toggleAudio = () => {
               <button>Copy</button>
             )}
           </CopyToClipboard>
-
         </div>
       </div>
+
+      {/* .........................invite the peer................. */}
+      {invite && (
+        <div
+          style={{
+            width: "20vw",
+            height: "17vh",
+            background: "white",
+            position: "absolute",
+            right: "2%",
+            top: "80%",
+            borderRadius: "10px",
+            display: isinvite ? "none" : "block",
+          }}
+        >
+          <p>
+            {" "}
+            <span style={{ fontWeight: "600" }}>{invite}</span> <br /> has
+            joined the room
+          </p>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => handleCallUser()}
+          >
+            Invite to this meet
+          </Button>
+        </div>
+      )}
+
+      {/* ........................incomming call..................  */}
+      {incomming && (
+        <div
+          style={{
+            width: "20vw",
+            height: "15vh",
+            background: "white",
+            position: "absolute",
+            right: "2%",
+            top: "80%",
+            borderRadius: "10px",
+            display: isaccept ? "none" : "flex",
+            justifyContent: "center",
+            // alignItems: "baseline",
+          }}
+        >
+          <iframe
+            src="https://giphy.com/embed/mbW2nvTE0TUc5IgRMm"
+            width="70"
+            height="70"
+            frameBorder="0"
+            class="giphy-embed"
+            allowFullScreen
+          ></iframe>
+
+          <div>
+            <p>Incomming call</p>
+
+            <Button variant="contained" color="success" onClick={sendStreams}>
+              Accept call
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
