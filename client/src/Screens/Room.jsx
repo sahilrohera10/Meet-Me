@@ -4,18 +4,21 @@ import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import "../Screens/Room.css";
 import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
 import {
   BsFillCameraVideoFill,
   BsFillCameraVideoOffFill,
 } from "react-icons/bs";
 import { AiOutlineAudio, AiOutlineAudioMuted } from "react-icons/ai";
+import { MdCallEnd } from "react-icons/md";
 
 import { useParams } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Room() {
   let { roomId } = useParams();
+  const navigate = useNavigate();
 
   const [iscopy, setIscopy] = useState(false);
   const [invite, setInvite] = useState("");
@@ -155,6 +158,11 @@ export default function Room() {
     borderRadius: "100px", // Add a border radius or any other styling you need
   };
 
+  const endcall = () => {
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <div
       style={{
@@ -233,29 +241,45 @@ export default function Room() {
           >
             {!videoEnabled && (
               <BsFillCameraVideoOffFill
-                style={{ height: "50px", width: "50px" }}
+                style={{ height: "40px", width: "40px" }}
                 onClick={toggleVideo}
               />
             )}
             {videoEnabled && (
               <BsFillCameraVideoFill
-                style={{ height: "50px", width: "50px" }}
+                style={{ height: "40px", width: "40px" }}
                 onClick={toggleVideo}
               />
             )}
 
             {!audioEnabled && (
               <AiOutlineAudioMuted
-                style={{ height: "50px", width: "50px" }}
+                style={{ height: "40px", width: "40px" }}
                 onClick={toggleAudio}
               />
             )}
             {audioEnabled && (
               <AiOutlineAudio
-                style={{ height: "50px", width: "50px" }}
+                style={{ height: "40px", width: "40px" }}
                 onClick={toggleAudio}
               />
             )}
+            <div
+              onClick={() => endcall()}
+              style={{
+                background: "red",
+                padding: "5px",
+                borderRadius: "50px",
+                paddingTop: "8px",
+                width: "40px",
+                cursor: "pointer",
+              }}
+            >
+              <MdCallEnd
+                color="white"
+                style={{ height: "30px", width: "30px" }}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -350,21 +374,22 @@ export default function Room() {
             top: "80%",
             borderRadius: "10px",
             display: isaccept ? "none" : "flex",
-            justifyContent: "center",
+            justifyContent: "space-evenly",
             // alignItems: "baseline",
           }}
         >
           <iframe
+            style={{ marginTop: "15px" }}
             src="https://giphy.com/embed/mbW2nvTE0TUc5IgRMm"
-            width="70"
-            height="70"
+            width="85"
+            height="85"
             frameBorder="0"
             class="giphy-embed"
             allowFullScreen
           ></iframe>
 
           <div>
-            <p>Incomming call</p>
+            <p style={{ fontWeight: "700" }}>Incomming call</p>
 
             <Button variant="contained" color="success" onClick={sendStreams}>
               Accept call

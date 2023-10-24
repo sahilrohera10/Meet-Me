@@ -1,12 +1,10 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import { useSelector, useDispatch } from "react-redux";
 import { addprofile } from "../utils/slices/userSlice";
 import logo_main from "../Asserts/Meet_me_logo.jpeg";
-import configData from "../config";
 import "./Lobby.css";
 import { Link } from "react-router-dom";
 import banner_pic from "../Asserts/banner_pic .jpeg";
@@ -155,7 +153,6 @@ export default function Lobby() {
               style={{ borderRadius: "10px", cursor: "pointer" }}
               onClick={() => login()}
             >
-              {/* Sign in with Google 🚀{" "} */}
               <img
                 style={{ width: "13vw", borderRadius: "10px" }}
                 src="https://www.drupal.org/files/issues/2020-01-26/google_logo.png"
@@ -167,7 +164,6 @@ export default function Lobby() {
       </nav>
       <div className="main_container">
         <div className="main_left">
-          {/* <h1>Welcome to MeetMe</h1> */}
           <p className="text_main">
             The #1 Live Video Call <br />
             one to one with peers
@@ -200,14 +196,8 @@ export default function Lobby() {
             </button>
           </div>
           <br />
-          {/* <div className="button_upper">
-            <button className="button_s" onClick={(e) => handleSubmit(e)}>
-              Join Now
-            </button>
-          </div> */}
         </div>
         <div className="main_right">
-          {/* <div class="triangle-right"></div> */}
           <img className="banner_pic1" src={banner_pic} alt="" />
         </div>
       </div>
