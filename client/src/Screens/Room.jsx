@@ -1,10 +1,22 @@
-import React, { useCallback, useEffect, useState , useRef } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useSocket } from "../context/SocketProvider";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
-import '../Screens/Room.css';
+import "../Screens/Room.css";
+import { useParams } from "react-router-dom";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function Room() {
+  let { roomId } = useParams();
+
+  const [iscopy, setIscopy] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIscopy(false);
+    }, 3000);
+  }, [iscopy]);
+
   const socket = useSocket();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
@@ -109,32 +121,104 @@ export default function Room() {
   ]);
   const videoRef = useRef();
   const videoStyles = {
-    width: '100%', // Set the width as you like
-    height: 'auto', // Set the height as you like
-    borderRadius: '100px', // Add a border radius or any other styling you need
+    width: "100%", // Set the width as you like
+    height: "auto", // Set the height as you like
+    borderRadius: "100px", // Add a border radius or any other styling you need
   };
 
   return (
-    <div style={{backgroundColor:'rgb(32,33,36)' , width:"100vw" , height:"100vh"}}>
-      <h1>Room</h1>
-      <h3> {remoteSocketId ? "Connected" : "No one is in the Room"} </h3>
+    <div
+      style={{
+        backgroundColor: "rgb(32,33,36)",
+        width: "100vw",
+        height: "100vh",
+      }}
+    >
+      <h1 style={{ color: "white" }}>Meet-Me's Room</h1>
+      <h3 style={{ color: "white" }}>
+        {" "}
+        {remoteSocketId ? "Connected" : "No one is in the here !"}{" "}
+      </h3>
       {myStream && <button onClick={sendStreams}>Send Stream</button>}
       {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>}
-      <div style={{display:'flex' , flexDirection:"row" ,justifyContent:"space-evenly"}}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        {myStream && (
+          <div style={{ margin: "auto" }}>
+            <ReactPlayer
+              className="player"
+              width="500px"
+              height="500px"
+              playing
+              muted
+              url={myStream}
+            />
+            <p style={{}}> My Stream </p>
+          </div>
+        )}
 
-      {myStream && (
-        <div style={{ margin: "auto" }}>
-          <ReactPlayer className="player" width="500px" height="500px"  playing muted url={myStream} />
-          <p style={{}}> My Stream </p>
-        </div>
-      )}
+        {remoteStream && (
+          <div style={{ margin: "auto" }}>
+            <ReactPlayer
+              className="player"
+              width="500px"
+              height="500px"
+              playing
+              muted
+              url={remoteStream}
+            />
+            <p> Remote Stream </p>
+          </div>
+        )}
+      </div>
 
-      {remoteStream && (
-        <div style={{ margin: "auto" }}>
-          <ReactPlayer className="player" width="500px" height="500px" playing muted url={remoteStream} />
-          <p> Remote Stream </p>
+      <div
+        style={{
+          position: "absolute",
+          top: "80%",
+          left: "3%",
+          border: "1px solid white",
+          width: "20vw",
+          height: "15vh",
+          borderRadius: "10px",
+          boxShadow: "rgb(132 125 125) 1px 1px 10px 0px",
+        }}
+      >
+        <p style={{ color: "white", marginTop: "8px" }}>
+          Share this room id with your peer 👇
+        </p>
+        <div
+          style={{
+            background: "#FFFFFF",
+            width: "15vw",
+            margin: "auto",
+            borderRadius: "10px",
+          }}
+        >
+          <input
+            style={{ width: "8vw", height: "5vh", border: "none" }}
+            type="text"
+            readOnly
+            value={roomId}
+          />{" "}
+          <CopyToClipboard text={roomId} onCopy={() => setIscopy(true)}>
+            {iscopy ? (
+              <button
+                disabled
+                style={{ background: "green", color: "white", border: "none" }}
+              >
+                Copied
+              </button>
+            ) : (
+              <button>Copy</button>
+            )}
+          </CopyToClipboard>
         </div>
-      )}
       </div>
     </div>
   );

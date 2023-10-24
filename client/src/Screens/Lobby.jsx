@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addprofile } from "../utils/slices/userSlice";
 import logo_main from "../Asserts/Meet_me_logo.jpeg";
 import configData from "../config";
-import "../Screens/Lobby.css";
+import "./Lobby.css";
 import { Link } from "react-router-dom";
 import banner_pic from "../Asserts/banner_pic .jpeg";
 import TextField from "@mui/material/TextField";
