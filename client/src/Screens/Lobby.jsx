@@ -20,10 +20,10 @@ export default function Lobby() {
   useEffect(() => {
     const id = localStorage.getItem("email");
     if (id) setEmail(id);
-
     const firstName = localStorage.getItem("userName");
     const lastName = localStorage.getItem("lastName");
-
+    const image = localStorage.getItem("image");
+    setImg(image);
     const full_name = firstName + " " + lastName;
     setName(full_name);
   }, []);
@@ -111,7 +111,7 @@ export default function Lobby() {
           // dispatch(addprofile(data));
           setEmail(data.email);
           localStorage.setItem("email", data.email);
-          // localStorage.setItem("image", data.picture);
+          localStorage.setItem("image", data.picture);
           setImg(data.picture);
           localStorage.setItem("userName", data.given_name);
           localStorage.setItem("lastName", data.family_name);

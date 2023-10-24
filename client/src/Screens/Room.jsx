@@ -25,10 +25,10 @@ export default function Room() {
   const [isinvite, setIsinvite] = useState(false);
   const [incomming, setIncomming] = useState(false);
   const [isaccept, setIsaccept] = useState(false);
-  const [userName , setUserName] = useState("");
-  const [lastName , setLastName] = useState("");
+  const [userName, setUserName] = useState("");
+  const [lastName, setLastName] = useState("");
 
-  const [remoteName , setRemoteName] = useState("");
+  const [remoteName, setRemoteName] = useState("");
 
   useEffect(() => {
     setTimeout(() => {
@@ -54,7 +54,7 @@ export default function Room() {
     setAudioEnabled(!audioEnabled);
   };
 
-  const handleUserJoined = useCallback(({ email, id ,name }) => {
+  const handleUserJoined = useCallback(({ email, id, name }) => {
     console.log(`Email ${email} has joined the room`);
     setRemoteName(name);
     setInvite(email);
@@ -67,19 +67,19 @@ export default function Room() {
       video: true,
     });
     const offer = await peer.getOffer();
-    socket.emit("user:call", { to: remoteSocketId, offer , userName , lastName });
+    socket.emit("user:call", { to: remoteSocketId, offer, userName, lastName });
     setMyStream(stream);
     setIsinvite(true);
   }, [remoteSocketId, socket]);
 
   const handleIncommingCall = useCallback(
-    async ({ from, offer ,userName , lastName }) => {
+    async ({ from, offer, userName, lastName }) => {
       setRemoteSocketId(from);
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: true,
       });
-      const name = userName+' '+lastName;
+      const name = userName + " " + lastName;
       setRemoteName(name);
       setMyStream(stream);
       console.log(`Incomming Call`, from, offer);
@@ -135,14 +135,13 @@ export default function Room() {
       setRemoteStream(remoteStream[0]);
     });
   }, []);
- 
-  useEffect(()=>{
+
+  useEffect(() => {
     const user_name = localStorage.getItem("userName");
     setUserName(user_name);
     const last_name = localStorage.getItem("lastName");
     setLastName(last_name);
-
-  },[])
+  }, []);
 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
@@ -216,7 +215,9 @@ export default function Room() {
               // playing
               url={myStream}
             />
-            <p className="vd-name" style={{}}>{userName} {lastName}</p>
+            <p className="vd-name" style={{}}>
+              {userName} {lastName}
+            </p>
           </div>
         )}
 
@@ -257,13 +258,13 @@ export default function Room() {
             {!videoEnabled && (
               <BsFillCameraVideoOffFill
                 style={{ height: "40px", width: "40px" }}
-                onClick={toggleVideo}
+                onClick={() => toggleVideo()}
               />
             )}
             {videoEnabled && (
               <BsFillCameraVideoFill
                 style={{ height: "40px", width: "40px" }}
-                onClick={toggleVideo}
+                onClick={() => toggleVideo()}
               />
             )}
 
