@@ -133,6 +133,7 @@ export default function Room() {
     peer.peer.addEventListener("track", async (ev) => {
       const remoteStream = ev.streams;
       setRemoteStream(remoteStream[0]);
+      console.log("remote stream=>", remoteStream[0]);
     });
   }, []);
 

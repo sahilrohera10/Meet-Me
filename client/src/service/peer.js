@@ -11,13 +11,13 @@ class PeerService {
           },
           {
             urls: "turn:global.turn.twilio.com:3478?transport=udp",
-            username: "ACff714228be4150bbad2c56ffc6d2101b",
-            credential: "cabd0850c174909ebe230ce2511c840b",
+            username: `${process.env.REACT_APP_ID}`,
+            credential: `${process.env.REACT_APP_AUTH}`,
           },
           {
             urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-            username: "ACff714228be4150bbad2c56ffc6d2101b",
-            credential: "cabd0850c174909ebe230ce2511c840b",
+            username: `${process.env.REACT_APP_ID}`,
+            credential: `${process.env.REACT_APP_AUTH}`,
           },
         ],
       });
