@@ -9,6 +9,16 @@ class PeerService {
               "stun:global.stun.twilio.com:3478",
             ],
           },
+          {
+            urls: "turn:global.turn.twilio.com:3478?transport=udp",
+            username: "ACff714228be4150bbad2c56ffc6d2101b",
+            credential: "cabd0850c174909ebe230ce2511c840b",
+          },
+          {
+            urls: "turn:global.turn.twilio.com:3478?transport=tcp",
+            username: "ACff714228be4150bbad2c56ffc6d2101b",
+            credential: "cabd0850c174909ebe230ce2511c840b",
+          },
         ],
       });
     }
