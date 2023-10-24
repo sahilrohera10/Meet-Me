@@ -10,15 +10,20 @@ class PeerService {
             ],
           },
           {
-            urls: "turn:global.turn.twilio.com:3478?transport=udp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
+            urls: "turn:49.36.184.21:3478",
+            username: "meetme",
+            credential: "meet123",
           },
-          {
-            urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
-          },
+          // {
+          //   urls: "turn:global.turn.twilio.com:3478?transport=udp",
+          //   username: `${process.env.REACT_APP_ID}`,
+          //   credential: `${process.env.REACT_APP_AUTH}`,
+          // },
+          // {
+          //   urls: "turn:global.turn.twilio.com:3478?transport=tcp",
+          //   username: `${process.env.REACT_APP_ID}`,
+          //   credential: `${process.env.REACT_APP_AUTH}`,
+          // },
         ],
       });
     }
