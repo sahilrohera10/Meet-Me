@@ -3,8 +3,13 @@ import { useSocket } from "../context/SocketProvider";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import "../Screens/Room.css";
+
+import { BsFillCameraVideoFill ,BsFillCameraVideoOffFill } from 'react-icons/bs'
+import { AiOutlineAudio , AiOutlineAudioMuted } from 'react-icons/ai'
+
 import { useParams } from "react-router-dom";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+
 
 export default function Room() {
   let { roomId } = useParams();
@@ -21,6 +26,19 @@ export default function Room() {
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+
+  const [videoEnabled, setVideoEnabled] = useState(true); // To track video status
+const [audioEnabled, setAudioEnabled] = useState(true); // To track audio status
+
+const toggleVideo = () => {
+  myStream.getVideoTracks()[0].enabled = !videoEnabled;
+  setVideoEnabled(!videoEnabled);
+};
+
+const toggleAudio = () => {
+  myStream.getAudioTracks()[0].enabled = !audioEnabled;
+  setAudioEnabled(!audioEnabled);
+};
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} has joined the room`);
@@ -132,13 +150,17 @@ export default function Room() {
         backgroundColor: "rgb(32,33,36)",
         width: "100vw",
         height: "100vh",
+
+        position:'relative'
       }}
     >
+
       <h1 style={{ color: "white" }}>Meet-Me's Room</h1>
       <h3 style={{ color: "white" }}>
         {" "}
         {remoteSocketId ? "Connected" : "No one is in the here !"}{" "}
       </h3>
+
       {myStream && <button onClick={sendStreams}>Send Stream</button>}
       {remoteSocketId && <button onClick={() => handleCallUser()}>Call</button>}
       <div
@@ -152,10 +174,17 @@ export default function Room() {
           <div style={{ margin: "auto" }}>
             <ReactPlayer
               className="player"
+
+              width="400px"
+              height="400px"
+              playing
+              muted = {!audioEnabled}
+
               width="500px"
               height="500px"
               playing
               muted
+
               url={myStream}
             />
             <p style={{}}> My Stream </p>
@@ -166,16 +195,34 @@ export default function Room() {
           <div style={{ margin: "auto" }}>
             <ReactPlayer
               className="player"
+
+              width="400px"
+              height="400px"
+              playing
+              muted = {!audioEnabled}
+
               width="500px"
               height="500px"
               playing
               muted
+
               url={remoteStream}
             />
             <p> Remote Stream </p>
           </div>
         )}
       </div>
+
+      <div className="control-panel-container" style={{display:"flex" , flexDirection:"row" , justifyContent:"space-evenly" ,alignItems:'center' }}>
+        <div className="control-panel" style={{backgroundColor:'aliceblue'}}>
+
+    {!videoEnabled &&  <BsFillCameraVideoOffFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} />}    
+      {videoEnabled && <BsFillCameraVideoFill style={{height:"50px" ,width:"50px"}} onClick={toggleVideo} /> }  
+
+   
+      {!audioEnabled && <AiOutlineAudioMuted style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
+      {audioEnabled && <AiOutlineAudio style={{height:"50px" ,width:"50px"}} onClick={toggleAudio} />}
+
 
       <div
         style={{
@@ -218,6 +265,7 @@ export default function Room() {
               <button>Copy</button>
             )}
           </CopyToClipboard>
+
         </div>
       </div>
     </div>

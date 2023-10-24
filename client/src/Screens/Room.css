@@ -8,3 +8,23 @@
     margin: 0;
     border-radius: 297px;
  }
+ .control-panel-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    /* background-color: aliceblue; */
+    place-self: center;
+    position: absolute;
+    bottom: 10%;
+    left: 30%;
+    align-items: center;
+ }
+ .control-panel{
+    background-color: aliceblue;
+    width: 40vw;
+    display: flex;
+    padding: 10px;
+    border-radius: 25px;
+    justify-content: space-around;
+    flex-direction: row;
+ }
