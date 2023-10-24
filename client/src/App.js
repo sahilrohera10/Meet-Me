@@ -8,13 +8,12 @@ import appStore from "./utils/appStore";
 function App() {
   return (
     <Provider store={appStore}>
-    <div className="App">
-      <Routes>
-        
-        <Route path="/" element={<Lobby />} />
-        <Route path="/:roomId" element={<Room />} />
-      </Routes>
-    </div>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Lobby />} />
+          <Route path="/:roomId" element={<Room />} />
+        </Routes>
+      </div>
     </Provider>
   );
 }

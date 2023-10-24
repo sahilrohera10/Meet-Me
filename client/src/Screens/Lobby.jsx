@@ -7,19 +7,25 @@ import { useSelector, useDispatch } from "react-redux";
 import { addprofile } from "../utils/slices/userSlice";
 import logo_main from "../Asserts/Meet_me_logo.jpeg";
 import configData from "../config";
-import "../Screens/Lobby.css";
+import "./Lobby.css";
 import { Link } from "react-router-dom";
-import banner_pic from "../Asserts/banner_pic .jpeg"
+import banner_pic from "../Asserts/banner_pic .jpeg";
+import TextField from "@mui/material/TextField";
+import { compose } from "@reduxjs/toolkit";
+
 export default function Lobby() {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
-  const dispatch = useDispatch();
-  const d = useSelector((store) => store.user.profile);
-  d.length && console.log(d[0].email);
+  const [img, setImg] = useState("");
 
-  //for user details we will store in redux store
+  useEffect(() => {
+    const id = localStorage.getItem("email");
+    if (id) setEmail(id);
+    const pic = localStorage.getItem("image");
+    setImg(pic);
+  }, []);
+
   const [user, setUser] = useState([]);
-  const [profile, setProfile] = useState([]);
 
   const createLink = (e, email) => {
     e.preventDefault();
@@ -43,6 +49,7 @@ export default function Lobby() {
       if (room.length > 0) {
         link = room;
       } else {
+        console.log("email=>", email);
         link = createLink(e, email);
       }
       console.log(link);
@@ -73,6 +80,7 @@ export default function Lobby() {
   });
 
   useEffect(() => {
+    console.log("user=>", user);
     if (user) {
       fetch(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
@@ -91,18 +99,15 @@ export default function Lobby() {
           return response.json();
         })
         .then((data) => {
-          dispatch(addprofile(data));
-
-          setProfile(data);
+          // dispatch(addprofile(data));
+          setEmail(data.email);
+          localStorage.setItem("email", data.email);
+          localStorage.setItem("image", data.picture);
+          console.log(data);
         })
         .catch((err) => console.log(err));
     }
   }, [user]);
-
-  const logOut = () => {
-    googleLogout();
-    setProfile(null);
-  };
 
   const styles = {
     navbar: {
@@ -117,6 +122,7 @@ export default function Lobby() {
       color: "#1a73e8", // Google Meet blue color
       textDecoration: "none",
       display: "flex",
+      marginTop: "20px",
     },
 
     navLink: {
@@ -137,77 +143,71 @@ export default function Lobby() {
             alt="Meet_Up"
           />
         </Link>
-        <ul style={styles.navLinks} className="elements_landing">
-          <li>
-            <Link to="/home" style={styles.navLink}>
-              Home
-            </Link>
-          </li>
-          <li>
-            <Link to="/about" style={styles.navLink}>
-              About
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" style={styles.navLink}>
-              Contact
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" style={styles.navLink}>
-              Settings
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" style={styles.navLink}>
-              calender
-            </Link>
-          </li>
-        </ul>
+        <div>
+          {email ? (
+            <img
+              style={{ width: "3vw", height: "6vh", borderRadius: "100px" }}
+              src={img}
+              alt=""
+            />
+          ) : (
+            <button
+              style={{ borderRadius: "10px", cursor: "pointer" }}
+              onClick={() => login()}
+            >
+              {/* Sign in with Google 🚀{" "} */}
+              <img
+                style={{ width: "13vw", borderRadius: "10px" }}
+                src="https://www.drupal.org/files/issues/2020-01-26/google_logo.png"
+                alt=""
+              />
+            </button>
+          )}
+        </div>
       </nav>
       <div className="main_container">
         <div className="main_left">
           {/* <h1>Welcome to MeetMe</h1> */}
           <p className="text_main">
-            Premium video meetings.
+            The #1 Live Video Call <br />
+            one to one with peers
+          </p>
+
+          <div style={{ textAlign: "left" }}>
+            <button className="button_s" onClick={(e) => handleSubmit(e)}>
+              Create an Instant Meet 🚀
+            </button>
             <br />
-            Now free for everyone.
-          </p>
-          <p className="text_submain">
-            We re-engineered the service that we built for secure
-            <br /> business meetings, Meet Me, to make it free and <br />
-            available for all.
-          </p>
-          <form action="">
-            {/* <label htmlFor="email">Email</label> */}
-            <input
-              type="email"
-              id="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {/* <label htmlFor="room">Room No.</label> */}
-            <input
+            <br />
+            <p style={{ color: "white", marginLeft: "15px" }}>
+              Or Join a Meet 👇
+            </p>
+            <TextField
+              sx={{
+                background: "white",
+                borderRadius: "10px",
+                marginLeft: "10px",
+              }}
+              id="filled-basic room"
+              label="Room Id"
+              variant="filled"
               type="text"
-              id="room"
-              placeholder="Room"
               value={room}
               onChange={(e) => setRoom(e.target.value)}
-            />
-            <br />
-            <div className="button_upper">
+            />{" "}
             <button className="button_s" onClick={(e) => handleSubmit(e)}>
-              Create an Instant Link
+              Join Now
             </button>
-            <button className="button_s" onClick={(e) => handleSubmit(e)}>Join Now</button>
-            </div>
-            
-          </form>
-          <button className="button_s" onClick={() => login()}>Sign in with Google 🚀 </button>
+          </div>
+          <br />
+          {/* <div className="button_upper">
+            <button className="button_s" onClick={(e) => handleSubmit(e)}>
+              Join Now
+            </button>
+          </div> */}
         </div>
         <div className="main_right">
-        {/* <div class="triangle-right"></div> */}
+          {/* <div class="triangle-right"></div> */}
           <img className="banner_pic1" src={banner_pic} alt="" />
         </div>
       </div>
