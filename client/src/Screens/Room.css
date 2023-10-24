@@ -28,3 +28,7 @@
     justify-content: space-around;
     flex-direction: row;
  }
+ .vd-name{
+   color: white;
+   font-size: larger;
+ }

@@ -10,16 +10,16 @@ const socketIdToEmailMap = new Map();
 io.on("connection", (socket) => {
   console.log("Socket connected", socket.id);
   socket.on("room:join", (data) => {
-    const { email, link } = data;
+    const { email, link ,name } = data;
     emailToSocketIdMap.set(email, socket.id);
     socketIdToEmailMap.set(socket.id, email);
-    io.to(link).emit("user:joined", { email, id: socket.id });
+    io.to(link).emit("user:joined", { email, id: socket.id ,name });
     socket.join(link);
     io.to(socket.id).emit("room:join", data);
   });
 
-  socket.on("user:call", ({ to, offer }) => {
-    io.to(to).emit("incomming:call", { from: socket.id, offer });
+  socket.on("user:call", ({ to, offer ,userName ,lastName }) => {
+    io.to(to).emit("incomming:call", { from: socket.id, offer ,userName ,lastName });
   });
 
   socket.on("call:accepted", ({ to, ans }) => {
