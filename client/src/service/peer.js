@@ -10,10 +10,10 @@ class PeerService {
           //   ],
           // },
           {
-            urls: "stun:49.36.186.183:3478",
+            urls: "stun:sahil:3478",
           },
           {
-            urls: "turn:49.36.186.183:3478",
+            urls: "turn:sahil:3478",
             username: "meetme",
             credential: "meet123",
           },
