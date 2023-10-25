@@ -10,7 +10,7 @@ class PeerService {
             ],
           },
           {
-            urls: "turn:49.36.186.183:3478",
+            urls: "turn:49.36.186.183",
             username: "meetme",
             credential: "meet123",
           },
