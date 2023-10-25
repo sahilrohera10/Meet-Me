@@ -10,7 +10,7 @@ class PeerService {
             ],
           },
           {
-            urls: "turn:49.36.186.183",
+            urls: "turn:meet-me-weld.vercel.app",
             username: "meetme",
             credential: "meet123",
           },
