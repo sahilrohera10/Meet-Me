@@ -12,21 +12,21 @@ class PeerService {
           // {
           //   urls: "stun:49.36.186.183:3478",
           // },
+          {
+            urls: "turn:60.70.80.91:3478",
+            username: "meetme",
+            credential: "meet123",
+          },
           // {
-          //   urls: "turn:meet-me-weld.vercel.app",
-          //   username: "meetme",
-          //   credential: "meet123",
+          //   urls: "turn:global.turn.twilio.com:3478?transport=udp",
+          //   username: `${process.env.REACT_APP_ID}`,
+          //   credential: `${process.env.REACT_APP_AUTH}`,
           // },
-          {
-            urls: "turn:global.turn.twilio.com:3478?transport=udp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
-          },
-          {
-            urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
-          },
+          // {
+          //   urls: "turn:global.turn.twilio.com:3478?transport=tcp",
+          //   username: `${process.env.REACT_APP_ID}`,
+          //   credential: `${process.env.REACT_APP_AUTH}`,
+          // },
         ],
       });
     }
