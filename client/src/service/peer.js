@@ -1,26 +1,33 @@
 class PeerService {
   constructor() {
-    if (!this.peer) {
+    // Initialize peer with empty configuration initially
+    this.peer = null;
+
+    // Fetch ICE servers from the API and initialize peer
+    this.initPeer();
+  }
+
+  async initPeer() {
+    const iceServers = await this.fetchIceServers();
+    if (iceServers) {
       this.peer = new RTCPeerConnection({
-        iceServers: [
-          {
-            urls: [
-              "stun:stun.l.google.com:19302",
-              "stun:global.stun.twilio.com:3478",
-            ],
-          },
-          {
-            urls: "turn:global.turn.twilio.com:3478?transport=udp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
-          },
-          {
-            urls: "turn:global.turn.twilio.com:3478?transport=tcp",
-            username: `${process.env.REACT_APP_ID}`,
-            credential: `${process.env.REACT_APP_AUTH}`,
-          },
-        ],
+        iceServers: iceServers,
       });
+    } else {
+      console.error("Failed to fetch ICE servers");
+    }
+  }
+
+  async fetchIceServers() {
+    try {
+      const response = await fetch(
+        "https://scimeet.metered.live/api/v1/turn/credentials?apiKey=10ef8a6a4f7d190368963d9362b79daf56fa"
+      );
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching ICE servers:", error);
+      return null;
     }
   }
 
